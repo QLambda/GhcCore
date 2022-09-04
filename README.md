@@ -8,3 +8,10 @@ Extract CoreLanguage from ghc and do type erasure
 $ stack clean --full
 $ stack build
 ```
+
+## Run and Test
+
+```bash
+$ stack run
+$ stack test 
+```
