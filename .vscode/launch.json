@@ -7,7 +7,7 @@
         {
             "type": "ghc",
             "request": "launch",
-            "name": "haskell(stack)",
+            "name": "haskell(Test)",
             "internalConsoleOptions": "openOnSessionStart",
             "workspace": "${workspaceFolder}",
             "startup": "${workspaceFolder}/test/Spec.hs",
@@ -17,29 +17,10 @@
             "mainArgs": "",
             "ghciPrompt": "H>>= ",
             "ghciInitialPrompt": "> ",
-            "ghciCmd": "stack ghci --test --no-load --no-build --main-is TARGET",
+            "ghciCmd": "stack ghci --with-ghc-ghci-dap Rre--test --no-load --no-build --main-is TARGET",
             "ghciEnv": {},
             "logFile": "${workspaceFolder}/.vscode/phoityne.log",
-            "logLevel": "WARNING",
-            "forceInspect": false
-        },
-        {
-            "type": "ghc",
-            "request": "launch",
-            "name": "haskell(cabal)",
-            "internalConsoleOptions": "openOnSessionStart",
-            "workspace": "${workspaceFolder}",
-            "startup": "${workspaceFolder}/app/Main.hs",
-            "startupFunc": "",
-            "startupArgs": "",
-            "stopOnEntry": false,
-            "mainArgs": "",
-            "ghciPrompt": "H>>= ",
-            "ghciInitialPrompt": "> ",
-            "ghciCmd": "cabal exec -- ghci-dap --interactive -i -i${workspaceFolder}",
-            "ghciEnv": {},
-            "logFile": "${workspaceFolder}/.vscode/phoityne.log",
-            "logLevel": "WARNING",
+            "logLevel": "DEBUG",
             "forceInspect": false
         }
     ]
