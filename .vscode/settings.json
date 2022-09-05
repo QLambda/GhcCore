@@ -6,5 +6,6 @@
     "cSpell.words": [
         "rtsopts"
     ],
-    "haskell.checkProject": false
+    "haskell.checkProject": false,
+    "files.autoSave": "onFocusChange"
 }
