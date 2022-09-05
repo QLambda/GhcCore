@@ -40,7 +40,7 @@ packages:
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
-# extra-deps: []
+# extra-deps: [ghc-9.4.2, template-haskell-2.19.0.0, exceptions-0.10.5, ghc-boot-th-9.4.1]
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

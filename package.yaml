@@ -44,8 +44,16 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -DGHC_LOADED_INTO_GHCI
     dependencies:
     - GhcCore
+    - ghc
+    - ghc-boot
+    - filepath
+    - containers
+    - transformers
+
+
 
 tests:
   GhcCore-test:
@@ -57,3 +65,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - GhcCore
+
+
