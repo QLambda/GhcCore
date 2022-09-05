@@ -1,1 +1,1 @@
-# ghccore
+# GhcCore
