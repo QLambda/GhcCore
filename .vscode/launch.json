@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "haskell(stack-app)",
             "internalConsoleOptions": "openOnSessionStart",
-            "workspace": "${workspaceFolder}",
+            "workspace": "${workspaceFolder}/app",
             "startup": "${workspaceFolder}/app/Main.hs",
             "startupFunc": "",
             "startupArgs": "",

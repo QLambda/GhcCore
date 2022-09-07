@@ -40,27 +40,16 @@ executable GhcCore-exe
   other-modules:
       Paths_GhcCore
   hs-source-dirs:
-      app
+      /workspaces/GhcCore/app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -DGHC_LOADED_INTO_GHCI
   build-depends:
-      GhcCore
-    , base >=4.7 && <5
+      base
     , containers
     , filepath
     , ghc
-    , ghc-boot
+    , ghc-paths
+    , haskeline
+    , mtl
+    , time
     , transformers
-  default-language: Haskell2010
-
-test-suite GhcCore-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Paths_GhcCore
-  hs-source-dirs:
-      test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      GhcCore
-    , base >=4.7 && <5
   default-language: Haskell2010
