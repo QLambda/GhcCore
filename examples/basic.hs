@@ -1,2 +1,2 @@
 inc n = n+1
-main = putStrLn (show (inc 1))
+main = print (show (inc 1))
