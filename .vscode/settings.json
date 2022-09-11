@@ -3,9 +3,27 @@
     "haskell.formattingProvider": "brittany",
     "haskell.ghcupExecutablePath": "~/.ghcup/bin/ghcup",
     "haskell.manageHLS": "GHCup",
-    "cSpell.words": [
-        "rtsopts"
-    ],
+    "cSpell.words": ["rtsopts"],
     "haskell.checkProject": false,
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "workbench.colorTheme": "Default High Contrast",
+    "terminal.integrated.sendKeybindingsToShell": true,
+    "haskell.toolchain": {
+       "hls": "latest",
+       "ghc": "8.10.7"
+    },
+    "haskell.serverExecutablePath": "~/.ghcup/bin/haskell-language-server-8.10.7",
+    "haskell.hlint.executablePath": "hlint"
+   
 }
+
+// curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+// In ~/.profile  ADD:
+// if [ -d "$HOME/.ghcup/bin" ] ; then
+//     PATH="$HOME/.ghcup/bin:$PATH"
+// fi
+
+
+// cabal install hlint
+

@@ -4,8 +4,8 @@ cups:
 bootstrap:
 	stack setup 8.10.7
 
-install: src/CoreDump/Plugin.hs
-	cabal install --lib
+build: src
+	stack build
 
-run: install
-	ghc -fplugin=CoreDump.Plugin examples/basic.hs
+run: build
+	stack ghc -- -fplugin=CoreDump.Plugin examples/basic.hs

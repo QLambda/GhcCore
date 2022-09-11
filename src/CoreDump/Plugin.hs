@@ -1,14 +1,17 @@
 module CoreDump.Plugin
     ( plugin
     ) where
-import GHC.Plugins
+import GhcPlugins
 
 plugin :: Plugin
 plugin = defaultPlugin{
     installCoreToDos = install
 }
 
+
+
+
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
 install _ todo = do
-        putMsgS "Hello!!"
+        putMsgS "Hello!"
         return todo
