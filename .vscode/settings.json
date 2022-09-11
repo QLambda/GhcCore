@@ -1,15 +1,12 @@
 {
-    "haskell.plugin.eval.config.exception": false,
     "haskell.formattingProvider": "brittany",
     "haskell.ghcupExecutablePath": "~/.ghcup/bin/ghcup",
     "haskell.manageHLS": "GHCup",
-    "cSpell.words": ["rtsopts"],
     "haskell.checkProject": false,
     "files.autoSave": "onFocusChange",
     "workbench.colorTheme": "Default High Contrast",
     "terminal.integrated.sendKeybindingsToShell": true,
     "haskell.toolchain": {
-       "hls": "latest",
        "ghc": "8.10.7"
     },
     "haskell.serverExecutablePath": "~/.ghcup/bin/haskell-language-server-8.10.7",
@@ -25,5 +22,5 @@
 // fi
 
 
-// cabal install hlint
+// sudo apt-get install hlint
 
