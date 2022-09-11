@@ -25,31 +25,12 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      CoreDump.Plugin
   other-modules:
       Paths_GhcCore
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
-  default-language: Haskell2010
-
-executable GhcCore-exe
-  main-is: Main.hs
-  other-modules:
-      Paths_GhcCore
-  hs-source-dirs:
-      /workspaces/GhcCore/app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -DGHC_LOADED_INTO_GHCI
-  build-depends:
-      base
-    , containers
-    , filepath
-    , ghc
-    , ghc-paths
-    , haskeline
-    , mtl
-    , time
-    , transformers
+      base ==4.15.*
+    , ghc >=8.10.7 && <8.11
   default-language: Haskell2010
