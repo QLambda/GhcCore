@@ -38,11 +38,6 @@ library:
   source-dirs: src
   exposed-modules:     CoreDump.Plugin
 
-library:
-  source-dirs: src
-  exposed-modules:     CoreDump.Plugin
-
-
 
 executables:
   examples:

@@ -12,6 +12,7 @@
        "ghc": "8.10.7",
        "hls": "1.7.0.0"
     },
+    "haskell.hlint.executablePath": "hlint",
 }
 
 // curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
@@ -21,10 +22,4 @@
 //     PATH="$HOME/.ghcup/bin:$PATH"
 // fi
 
-
-// sudo apt-get install hlint
-
-// cabalgen install implicit-hie
-
-//Run: gen-hie > hie.yaml
 

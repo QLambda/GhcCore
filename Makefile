@@ -3,6 +3,8 @@ cups:
 
 bootstrap:
 	stack setup 8.10.7
+	cd /tmp; stack install hlint; cd --
+	echo "Install language server as specified in README.md"
 
 build: src
 	stack build
