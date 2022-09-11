@@ -1,1 +1,1 @@
-/home/codespace/.ghcup/bin/ghc
+/home/codespace/.ghcup/bin/haskell-language-server-8.10.7

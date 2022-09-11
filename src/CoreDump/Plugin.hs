@@ -8,6 +8,8 @@ plugin = defaultPlugin{
     installCoreToDos = install
 }
 
+-- test :: IO Int
+
 
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
 install _ todo = do

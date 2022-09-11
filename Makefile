@@ -3,6 +3,7 @@ cups:
 
 bootstrap:
 	stack setup 8.10.7
+	stack haddock --keep-going
 	cd /tmp; stack install hlint; cd --
 	echo "Install language server as specified in README.md"
 
