@@ -39,12 +39,6 @@ library:
   exposed-modules:     CoreDump.Plugin
 
 
-executables:
-  examples:
-    main:                main.hs
-    source-dirs:        /workspaces/GhcCore/examples
-
-
 tests:
   GhcCore-test:
     main:                Spec.hs

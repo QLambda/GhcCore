@@ -28,20 +28,10 @@ library
       CoreDump.Plugin
   other-modules:
       CoreDump.CoreExtract
+      CoreDump.UntypedCore
       Paths_GhcCore
   hs-source-dirs:
       src
-  build-depends:
-      base
-    , ghc
-  default-language: Haskell2010
-
-executable examples
-  main-is: main.hs
-  other-modules:
-      Paths_GhcCore
-  hs-source-dirs:
-      /workspaces/GhcCore/examples
   build-depends:
       base
     , ghc

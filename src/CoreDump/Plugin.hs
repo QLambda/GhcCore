@@ -1,17 +1,23 @@
 module CoreDump.Plugin
     ( plugin
     ) where
-import GhcPlugins
+
+import GHC.Plugins
+import CoreDump.CoreExtract (coreToCProgram)
 
 plugin :: Plugin
 plugin = defaultPlugin{
     installCoreToDos = install
 }
 
--- test :: IO Int
+coreDump::ModGuts -> CoreM ModGuts
+coreDump mod = do 
+                    liftIO $ print $ coreToCProgram  mod
+                    return mod
+
 
 
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
-install _ todo = do
-        putMsgS "Hello!"
-        return todo
+install _ todo = do 
+                    putMsgS "Installing CoreDump!"
+                    return $ [(CoreDoPluginPass "CoreDump" coreDump)]

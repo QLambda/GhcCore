@@ -9,10 +9,11 @@
     "workbench.colorTheme": "Default High Contrast",
     "terminal.integrated.sendKeybindingsToShell": true,
     "haskell.toolchain": {
-       "ghc": "8.10.7",
+       "ghc": "9.4.2",
        "hls": "1.7.0.0"
     },
-    "haskell.hlint.executablePath": "hlint",
+    //"haskell.hlint.executablePath": "hlint",
+    "hoogle-vscode.useCabalDependencies": true,
 }
 
 // curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh

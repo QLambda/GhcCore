@@ -2,10 +2,10 @@ cups:
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
 bootstrap:
-	stack setup 8.10.7
+	stack config set system-ghc --global true
+	stack setup
 	stack haddock --keep-going
-	cd /tmp; stack install hlint; cd --
-	echo "Install language server as specified in README.md"
+	stack install hlint
 
 build: src
 	stack build
