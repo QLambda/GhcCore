@@ -46,14 +46,13 @@ data UTAltCon
 
 
 instance Show UTExpr where
-    show (UTVar var t)   =  "(" ++ var ++ "::" ++ t ++ ")"
+    show (UTVar var t)   =  var
     show (UTLit literal) = "Literal("++ literal ++ ")"
     show (UTApp e1 e2)   =  show e1 ++ " (" ++ show e2 ++ ") "
     show (UTLam var e)   = "(\\" ++ var ++ " -> " ++ show e ++ ")"
-    show (UTLet  b e2)   = "let  "++ show b ++ "in" ++ show e2
+    show (UTLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (UTCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
     show (Skip s)        = s
-
 
 
 
@@ -72,7 +71,7 @@ instance Show UTBinders where
     show = showB
         where
             showB (UTBinders [])    = ""
-            showB (UTBinders (b:bs)) = show b ++ "\n-----\n" ++ showB (UTBinders bs)
+            showB (UTBinders (b:bs)) = show b ++ "\n" ++ showB (UTBinders bs)
 
 
 instance Show UntypedCoreModule where

@@ -45,15 +45,18 @@ typeErasure (Coercion c) = Coercion c
 -- Coercion Coercion
 
 
-exprTopUTExpr (Var id) = UTVar (getOccString id)  (showPprUnsafe id)
+exprTopUTExpr (Var id) = UTVar (getOccString id)  ""
 exprTopUTExpr (Lit literal) = UTLit $ showOuputable literal
-exprTopUTExpr (Lam name expr) = UTLam (getOccString name) (exprTopUTExpr expr)
 exprTopUTExpr (App expr args) = UTApp (exprTopUTExpr expr) (exprTopUTExpr args)
-exprTopUTExpr (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExpr expr) ++ ")"
+exprTopUTExpr (Lam name expr) = UTLam (getOccString name) (exprTopUTExpr expr)
+exprTopUTExpr (Let binder expr) = UTLet (getUTBinder binder) (exprTopUTExpr expr)
+exprTopUTExpr (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
 exprTopUTExpr (Tick _ expr) = Skip $ "Tick("++  show (exprTopUTExpr expr) ++ ")"
 exprTopUTExpr (Type t) = Skip $ "::" ++ showPprUnsafe t
 exprTopUTExpr (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
-exprTopUTExpr expr = Skip "TODO"
+exprTopUTExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopUTExpr exp1) ++ ") of  " ++ (show $ map showOuputable  alts)
+--exprTopUTExpr expr = Skip "TODO"
+
 
 getUTBinder::CoreBind -> UTBinder
 getUTBinder (NonRec name expr) = UTNonRec (getOccString name) (exprTopUTExpr  expr) 
