@@ -1,3 +1,4 @@
+*.Core
 dist
 dist-*
 cabal-dev

@@ -1,1 +1,0 @@
-/home/codespace/.ghcup/bin/haskell-language-server-9.4.2

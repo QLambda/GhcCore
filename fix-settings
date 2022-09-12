@@ -1,3 +1,0 @@
-#!/bin/bash
-(echo .stack-work/install/x86_64-linux-tinfo6/*/) | tr " " "\n" | xargs -I {} cp -v /home/codespace/.ghcup/ghc/9.0.2/lib/ghc-9.0.2/{settings,platformConstants} {}/9.0.2/lib
-cp /home/codespace/.ghcup/ghc/9.0.2/lib/ghc-9.0.2/{settings,platformConstants} /home/codespace/.local/lib/

@@ -11,27 +11,28 @@ data UntypedCoreModule = UntypedCoreModule {
                                 binders :: UTBinders            -- Binders
                           }      
 
-data UTBinders = UTBinders {getBinders::[UTBinder]}
+newtype UTBinders = UTBinders {getBinders::[UTBinder]}
 data UTBinder = UTNonRec String UTExpr | UTRec [(String, UTExpr)]
 
 
 
 data UTExpr
-  = UTVar   String
+  = UTVar   String String
   | UTLit   String
   | UTApp   UTExpr  UTExpr
   | UTLam   String UTExpr 
   | UTLet   UTBinder UTExpr
   | UTCase  UTExpr [UTAlt]  
-  | Skip
+  | Skip String
   -- | UTCast  UTExpr UTCoercionR 
   -- | Tick  CoreTickish (Expr b)
   -- | Type  Type
   -- | Coercion UTCoercion
-  deriving Show
+  
 
-data UTAlt = UTAlt UTAltCon [String] (UTExpr)
+data UTAlt = UTAlt UTAltCon [String] UTExpr
                     deriving Show
+
 
 
 data UTAltCon
@@ -44,6 +45,17 @@ data UTAltCon
    deriving (Eq, Show)
 
 
+instance Show UTExpr where
+    show (UTVar var t)   =  "(" ++ var ++ "::" ++ t ++ ")"
+    show (UTLit literal) = "Literal("++ literal ++ ")"
+    show (UTApp e1 e2)   =  show e1 ++ " (" ++ show e2 ++ ") "
+    show (UTLam var e)   = "(\\" ++ var ++ " -> " ++ show e ++ ")"
+    show (UTLet  b e2)   = "let  "++ show b ++ "in" ++ show e2
+    show (UTCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
+    show (Skip s)        = s
+
+
+
 
 {-
     Show Section
@@ -54,16 +66,18 @@ instance Show UTBinder where
     show (UTRec binders) = "\nREC {\n" ++ shollAll binders ++ "\n}\n\n"
                             where 
                                 shollAll [] = ""
-                                shollAll ((name, expr):bs) = "name=" ++ show expr ++ "\n" ++ shollAll bs
+                                shollAll ((name, expr):bs) = name ++ " = " ++ show expr ++ "\n" ++ shollAll bs
 
 instance Show UTBinders where
-    show (UTBinders [])    = ""
-    show (UTBinders (b:bs)) = show b ++ "\n-----\n" ++ show bs
+    show = showB
+        where
+            showB (UTBinders [])    = ""
+            showB (UTBinders (b:bs)) = show b ++ "\n-----\n" ++ showB (UTBinders bs)
 
 
 instance Show UntypedCoreModule where
-    show (UntypedCoreModule (unit, mname) binders) = "module "++  (moduleNameString mname) ++ " (Unit:" ++ unit ++ ")" ++ "\n\n" 
-                                                     ++ (show binders)
+    show (UntypedCoreModule (unit, mname) binders) = "module "++  moduleNameString mname ++ " (Unit:" ++ unit ++ ")" ++ "\n\n" 
+                                                     ++ show binders
 
 
 

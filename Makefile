@@ -11,4 +11,4 @@ build: src
 	stack build
 
 run: build
-	stack ghc -- -fplugin=CoreDump.Plugin examples/basic.hs
+	cd examples; stack ghc -- -fplugin=CoreDump.Plugin basic.hs; cd -

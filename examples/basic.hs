@@ -1,2 +1,7 @@
-inc n = n+1
-main = print (show (inc 1))
+{-# LANGUAGE NoImplicitPrelude #-}
+import Protolude
+import Basici
+
+main = putStrLn (show (inc 0))
+
+
