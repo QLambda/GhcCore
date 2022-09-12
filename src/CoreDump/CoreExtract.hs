@@ -16,11 +16,20 @@ getModuleName::Module -> (String, ModuleName)
 getModuleName m = (show $ moduleUnit m, moduleName m)
 
 
+showOuputable out = renderWithContext defaultSDocContext (ppr out)
+
 -- data Bind b = 
 --             | Rec [(b, (Expr b))]
 --   deriving Data
 
-exprTopUTExpr::(Expr b) -> UTExpr
+
+exprTopUTExpr (Var id) = UTVar $ getOccString id
+exprTopUTExpr (Lit literal) = UTLit $ showOuputable literal
+exprTopUTExpr (Lam name expr) = UTLam (getOccString name) (exprTopUTExpr expr)
+exprTopUTExpr (App expr args) = UTApp (exprTopUTExpr expr) (exprTopUTExpr args)
+
+
+
 exprTopUTExpr expr = Skip --TODO
 
 getUTBinder::CoreBind -> UTBinder

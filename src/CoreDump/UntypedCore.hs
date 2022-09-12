@@ -15,8 +15,34 @@ data UTBinders = UTBinders {getBinders::[UTBinder]}
 data UTBinder = UTNonRec String UTExpr | UTRec [(String, UTExpr)]
 
 
-data UTExpr = Skip
+
+data UTExpr
+  = UTVar   String
+  | UTLit   String
+  | UTApp   UTExpr  UTExpr
+  | UTLam   String UTExpr 
+  | UTLet   UTBinder UTExpr
+  | UTCase  UTExpr [UTAlt]  
+  | Skip
+  -- | UTCast  UTExpr UTCoercionR 
+  -- | Tick  CoreTickish (Expr b)
+  -- | Type  Type
+  -- | Coercion UTCoercion
+  deriving Show
+
+data UTAlt = UTAlt UTAltCon [String] (UTExpr)
                     deriving Show
+
+
+data UTAltCon
+  = UTDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
+                      -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
+  | UTLitAlt  String  -- ^ A literal: @case e of { 1 -> ... }@
+                      -- Invariant: always an *unlifted* literal
+                      -- See Note [Literal alternatives]
+  | DEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
+   deriving (Eq, Show)
+
 
 
 {-
