@@ -28,6 +28,7 @@ library
       CoreDump.Plugin
   other-modules:
       CoreDump.CoreExtract
+      CoreDump.TypeToStr
       CoreDump.UntypedCore
       Paths_GhcCore
   hs-source-dirs:

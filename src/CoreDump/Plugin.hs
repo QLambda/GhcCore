@@ -21,7 +21,7 @@ addBreacks ('\\':'n':xs) = '\n':addBreacks xs
 addBreacks (x:xs) = x:addBreacks xs
 
 
-
+_showOuputable out = renderWithContext defaultSDocContext (ppr out)
 
 dumpToFile filename content= do writeFile filename content
 
@@ -29,9 +29,11 @@ getModuleName mod = showPprUnsafe  $ mg_module  mod
 
 coreDump::ModGuts -> CoreM ModGuts
 coreDump mod = do 
-                    let coreStr = coreToCProgram  mod
-                    liftIO $ print $ coreToCProgram  mod
-                    liftIO $ writeFile (getModuleName mod++".Core") (show coreStr)
+                    let typesCtor = showSDocUnsafe $ ppr $ mg_tcs mod
+                    let dependencies = (_showOuputable  $ dep_direct_mods $ mg_deps mod ) ++ "\n\n" ++ (_showOuputable  $ dep_direct_pkgs $ mg_deps mod )
+                    let coreStr = typesCtor ++ "\n----\n" ++ dependencies ++ "\n----\n"++ show  (coreToCProgram  mod)
+                    liftIO $ print coreStr
+                    liftIO $ writeFile (getModuleName mod++".Core") coreStr
                     -- liftIO $ print "--- mg_module mod ---"
                     -- liftIO $ print $ showPprUnsafe  $ mg_module  mod
                     -- liftIO $ print "--- mg_deps mod ---"

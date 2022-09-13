@@ -4,6 +4,7 @@ import GHC.Types.Var (Var(..))
 import GHC.Unit.Types
 import GHC.Unit.Module.Name
 import CoreDump.UntypedCore
+-- import CoreDump.TypeToStr
 
 
 
@@ -44,15 +45,25 @@ typeErasure (Coercion c) = Coercion c
 -- Type Type	 
 -- Coercion Coercion
 
+typeToStr::Type -> String
+typeToStr  = showOuputable 
+
+extractVar::Var->String
+extractVar v | isTyVar v = getOccString v ++ "::kind{" ++ typeToStr ( varType v)++"}"
+             | isTcTyVar  v  = getOccString v ++ "::kind{" ++ typeToStr ( varType  v)++"}"
+             | isId  v   = getOccString v ++ "::type{" ++ typeToStr ( varType v)++"}"
+
+
+
 
 exprTopUTExpr (Var id) = UTVar (getOccString id)  ""
 exprTopUTExpr (Lit literal) = UTLit $ showOuputable literal
 exprTopUTExpr (App expr args) = UTApp (exprTopUTExpr expr) (exprTopUTExpr args)
-exprTopUTExpr (Lam name expr) = UTLam (getOccString name) (exprTopUTExpr expr)
+exprTopUTExpr (Lam name expr) = UTLam (extractVar name) (exprTopUTExpr expr)
 exprTopUTExpr (Let binder expr) = UTLet (getUTBinder binder) (exprTopUTExpr expr)
 exprTopUTExpr (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
 exprTopUTExpr (Tick _ expr) = Skip $ "Tick("++  show (exprTopUTExpr expr) ++ ")"
-exprTopUTExpr (Type t) = Skip $ "::" ++ showPprUnsafe t
+exprTopUTExpr (Type t) = Skip $ "@" ++ showPprUnsafe t
 exprTopUTExpr (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
 exprTopUTExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopUTExpr exp1) ++ ") of  " ++ (show $ map showOuputable  alts)
 --exprTopUTExpr expr = Skip "TODO"

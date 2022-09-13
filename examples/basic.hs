@@ -2,6 +2,7 @@
 import Protolude
 import Basici
 
-main = putStrLn (show (inc 0))
+main::IO ()
+main = putStrLn  ((show (inc 0))::[Char])
 
 

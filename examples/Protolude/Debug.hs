@@ -1,9 +1,9 @@
-{-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 
 module Protolude.Debug (
-  undefined,
+  -- undefined,
   trace,
   traceM,
   traceId,
@@ -11,8 +11,8 @@ module Protolude.Debug (
   traceShow,
   traceShowId,
   traceShowM,
-  notImplemented,
-  witness,
+  -- notImplemented,
+  -- witness,
 ) where
 
 import Data.Text (Text, unpack)
@@ -57,13 +57,13 @@ traceM s = trace (unpack s) (return ())
 traceId :: Text -> Text
 traceId s = trace s s
 
-{-# WARNING notImplemented "'notImplemented' remains in code" #-}
-notImplemented :: a
-notImplemented = error "Not implemented"
+-- {-# WARNING notImplemented "'notImplemented' remains in code" #-}
+-- notImplemented :: a
+-- notImplemented = error "Not implemented"
 
-{-# WARNING undefined "'undefined' remains in code" #-}
-undefined :: a
-undefined = error "Prelude.undefined"
+-- {-# WARNING undefined "'undefined' remains in code" #-}
+-- undefined :: a
+-- undefined = error "Prelude.undefined"
 
-witness :: a
-witness = error "Type witness should not be evaluated"
+-- witness :: a
+-- witness = error "Type witness should not be evaluated"

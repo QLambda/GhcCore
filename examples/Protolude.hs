@@ -78,7 +78,7 @@ module Protolude (
   -- * Bifunctor functions
   module Bifunctor,
   -- * Bifunctor functions
-  module Hashable,
+  -- module Hashable,
 
   -- * Deepseq functions
   module DeepSeq,
@@ -360,12 +360,12 @@ import Data.List (tail)
 #endif
 
 -- Hashing
-import Data.Hashable as Hashable (
-    Hashable
-  , hash
-  , hashWithSalt
-  , hashUsing
-  )
+-- import Data.Hashable as Hashable (
+--     Hashable
+--   , hash
+--   , hashWithSalt
+--   , hashUsing
+--   )
 
 import Data.Map as DataStructures (Map)
 import Data.Set as DataStructures (Set)
@@ -881,37 +881,37 @@ import Control.Concurrent as Concurrency (
   , mkWeakThreadId
   , myThreadId
   )
-import Control.Concurrent.Async as Concurrency (
-    Async(..)
-  , Concurrently(..)
-  , async
-  , asyncBound
-  , asyncOn
-  , withAsync
-  , withAsyncBound
-  , withAsyncOn
-  , wait
-  , poll
-  , waitCatch
-  , cancel
-  , cancelWith
-  , asyncThreadId
-  , waitAny
-  , waitAnyCatch
-  , waitAnyCancel
-  , waitAnyCatchCancel
-  , waitEither
-  , waitEitherCatch
-  , waitEitherCancel
-  , waitEitherCatchCancel
-  , waitEither_
-  , waitBoth
-  , link
-  , link2
-  , race
-  , race_
-  , concurrently
-  )
+-- import Control.Concurrent.Async as Concurrency (
+--     Async(..)
+--   , Concurrently(..)
+--   , async
+--   , asyncBound
+--   , asyncOn
+--   , withAsync
+--   , withAsyncBound
+--   , withAsyncOn
+--   , wait
+--   , poll
+--   , waitCatch
+--   , cancel
+--   , cancelWith
+--   , asyncThreadId
+--   , waitAny
+--   , waitAnyCatch
+--   , waitAnyCancel
+--   , waitAnyCatchCancel
+--   , waitEither
+--   , waitEitherCatch
+--   , waitEitherCancel
+--   , waitEitherCatchCancel
+--   , waitEither_
+--   , waitBoth
+--   , link
+--   , link2
+--   , race
+--   , race_
+--   , concurrently
+--   )
 
 import Foreign.Ptr as Foreign (IntPtr, WordPtr)
 import Foreign.Storable as Foreign (Storable)
