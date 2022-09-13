@@ -20,61 +20,72 @@ getModuleName m = (show $ moduleUnit m, moduleName m)
 
 showOuputable out = renderWithContext defaultSDocContext (ppr out)
 
-isType::Expr b -> Bool
-isType (Type _) = True
-isType (Var id) = not $ isId id--isTyVar id
-isType e = False
-
-
-
-typeErasure::Expr b -> Expr b
-typeErasure (Var id) = Var id
-typeErasure (Lit literal) = Lit literal
-typeErasure (Lam name expr) = Lam name $ typeErasure expr
-typeErasure (App expr arg) = if isType arg then  typeErasure expr else App (typeErasure expr) (typeErasure arg) 
-typeErasure (Cast expr coersion) = Cast (typeErasure expr) coersion
-typeErasure (Tick t expr) = Tick t $ typeErasure expr
-typeErasure (Coercion c) = Coercion c
-
-
--- Lam b (Expr b)	 
--- Let (Bind b) (Expr b)	 
--- Case (Expr b) b Type [Alt b]	 
--- Cast (Expr b) CoercionR	 
--- Tick CoreTickish (Expr b)	 
--- Type Type	 
--- Coercion Coercion
 
 typeToStr::Type -> String
 typeToStr  = showOuputable 
 
-extractVar::Var->String
-extractVar v | isTyVar v = getOccString v ++ "::kind{" ++ typeToStr ( varType v)++"}"
-             | isTcTyVar  v  = getOccString v ++ "::kind{" ++ typeToStr ( varType  v)++"}"
-             | isId  v   = getOccString v ++ "::type{" ++ typeToStr ( varType v)++"}"
+extractVar::Var->(String, String) -- returns (variableName, type)
+extractVar v | isTyVar v = (getOccString v , "::kind{" ++ typeToStr ( varType v)++"}")
+             | isTcTyVar v  = (getOccString v , "::kind{" ++ typeToStr ( varType  v)++"}")
+             | isId  v   = (getOccString v , "::type{" ++ typeToStr ( varType v)++"}")
+
+isKindVar::Var -> Bool
+isKindVar v =  isTyVar v || isTcTyVar v
+
+isType::Expr b -> Bool
+isType (Var id) = isTyVar id || isTcTyVar id
+isType (Type t) = True
+isType  x = False
 
 
 
+------------------------------
+-- exprTopUTExpr (Var id) = UTVar n t
+--                             where
+--                                 (n, t)=extractVar id
+-- exprTopUTExpr (Lit literal) = UTLit $ showOuputable literal
+-- exprTopUTExpr (App expr args) = UTApp (exprTopUTExpr expr) (exprTopUTExpr args)
+-- exprTopUTExpr (Lam name expr) = UTLam n t (exprTopUTExpr expr)
+--                                     where
+--                                          (n, t)=extractVar name
+-- exprTopUTExpr (Let binder expr) = UTLet (getUTBinder binder) (exprTopUTExpr expr)
+-- exprTopUTExpr (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
+-- exprTopUTExpr (Tick _ expr) = Skip $ "Tick("++  show (exprTopUTExpr expr) ++ ")"
+-- exprTopUTExpr (Type t) = Skip $ "@" ++ showPprUnsafe t
+-- exprTopUTExpr (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
+-- exprTopUTExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopUTExpr exp1) ++ ") of " ++ (show $ map showOuputable  alts)
 
-exprTopUTExpr (Var id) = UTVar (getOccString id)  ""
-exprTopUTExpr (Lit literal) = UTLit $ showOuputable literal
-exprTopUTExpr (App expr args) = UTApp (exprTopUTExpr expr) (exprTopUTExpr args)
-exprTopUTExpr (Lam name expr) = UTLam (extractVar name) (exprTopUTExpr expr)
-exprTopUTExpr (Let binder expr) = UTLet (getUTBinder binder) (exprTopUTExpr expr)
-exprTopUTExpr (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
-exprTopUTExpr (Tick _ expr) = Skip $ "Tick("++  show (exprTopUTExpr expr) ++ ")"
-exprTopUTExpr (Type t) = Skip $ "@" ++ showPprUnsafe t
-exprTopUTExpr (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
-exprTopUTExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopUTExpr exp1) ++ ") of  " ++ (show $ map showOuputable  alts)
+---------------------------
+
+exprTopUTExprNoTyped (Var id) = UTVar n ""
+                            where
+                                (n, t)=extractVar id
+exprTopUTExprNoTyped (Lit literal) = UTLit $ showOuputable literal
+exprTopUTExprNoTyped (App expr arg) = if isType arg then expr1 else UTApp expr1 utarg
+                                        where
+                                            expr1 = exprTopUTExprNoTyped expr
+                                            utarg = exprTopUTExprNoTyped arg
+
+exprTopUTExprNoTyped (Lam name expr) = if isKindVar name then utexpr else UTLam n "" utexpr
+                                        where
+                                            utexpr = exprTopUTExprNoTyped expr
+                                            (n, t)=extractVar name
+
+exprTopUTExprNoTyped (Let binder expr) = UTLet (getUTBinder binder) (exprTopUTExprNoTyped expr)
+exprTopUTExprNoTyped (Cast expr coersion) = Skip $ "UTCast("++  show (exprTopUTExprNoTyped expr) ++ "~" ++ showOuputable coersion ++ ")"
+exprTopUTExprNoTyped (Tick _ expr) = Skip $ "Tick("++  show (exprTopUTExprNoTyped expr) ++ ")"
+exprTopUTExprNoTyped (Type t) = Skip $ "@" ++ showPprUnsafe t
+exprTopUTExprNoTyped (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
+exprTopUTExprNoTyped (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopUTExprNoTyped exp1) ++ ") of " ++ (show $ map showOuputable  alts)
 --exprTopUTExpr expr = Skip "TODO"
 
 
 getUTBinder::CoreBind -> UTBinder
-getUTBinder (NonRec name expr) = UTNonRec (getOccString name) (exprTopUTExpr  expr) 
+getUTBinder (NonRec name expr) = UTNonRec (getOccString name) (exprTopUTExprNoTyped  expr) 
 getUTBinder (Rec exprs) =  UTRec (unpack exprs)
                             where
                                 unpack [] = []
-                                unpack ((name, expr):es) = (getOccString name, exprTopUTExpr  expr) : unpack es
+                                unpack ((name, expr):es) = (getOccString name, exprTopUTExprNoTyped  expr) : unpack es
 
 
 getUTBinders::CoreProgram -> UTBinders

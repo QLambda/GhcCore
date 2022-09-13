@@ -31,7 +31,10 @@ coreDump::ModGuts -> CoreM ModGuts
 coreDump mod = do 
                     let typesCtor = showSDocUnsafe $ ppr $ mg_tcs mod
                     let dependencies = (_showOuputable  $ dep_direct_mods $ mg_deps mod ) ++ "\n\n" ++ (_showOuputable  $ dep_direct_pkgs $ mg_deps mod )
-                    let coreStr = typesCtor ++ "\n----\n" ++ dependencies ++ "\n----\n"++ show  (coreToCProgram  mod)
+                    let coreExpStr = show  (coreToCProgram  mod )
+                    let coreExpStrNoType = show  (coreToCProgram  mod )
+                    let coreStr = typesCtor ++ "\n----\n" ++ dependencies ++ "\n--Typed--\n" ++ coreExpStr ++ "\n--No Typed--\n" ++ coreExpStrNoType
+                   
                     liftIO $ print coreStr
                     liftIO $ writeFile (getModuleName mod++".Core") coreStr
                     -- liftIO $ print "--- mg_module mod ---"

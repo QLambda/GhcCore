@@ -17,10 +17,10 @@ data UTBinder = UTNonRec String UTExpr | UTRec [(String, UTExpr)]
 
 
 data UTExpr
-  = UTVar   String String
+  = UTVar   String String          -- varName type
   | UTLit   String
   | UTApp   UTExpr  UTExpr
-  | UTLam   String UTExpr 
+  | UTLam   String String UTExpr   -- varName type exp
   | UTLet   UTBinder UTExpr
   | UTCase  UTExpr [UTAlt]  
   | Skip String
@@ -46,13 +46,13 @@ data UTAltCon
 
 
 instance Show UTExpr where
-    show (UTVar var t)   =  var
+    show (UTVar var t)   =  var++t
     show (UTLit literal) = "Literal("++ literal ++ ")"
-    show (UTApp e1 e2)   =  show e1 ++ " " ++ show e2 
-    show (UTLam var e)   = "\\" ++ var ++ " -> (" ++ show e ++ ")"
+    show (UTApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
+    show (UTLam var t  e)   = "\\" ++ var ++ t ++ " -> {" ++ show e ++ "}"
     show (UTLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (UTCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
-    show (Skip s)        = s
+    show (Skip s)        = "Skip_"++s
 
 
 
