@@ -1,8 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-import Protolude
-import Basici
+module Basic where
+import GHC.Num ((+), Num)
 
-main::IO ()
-main = putStrLn  ((show (inc 0))::[Char])
-
+add x y = x+y
 

@@ -2,8 +2,6 @@
 
 Currently we are using ghc-9.4.2
 
-
-
 For chainging toolset:
 ```shell
 ghcup tui
@@ -11,12 +9,13 @@ ghcup tui
 
 ## Development environment setup
 
-Check in ~/.vscode/settings.json    How to setup the development environment dependencies, then:
 
 ```shell
 make bootstrap
 ```
 
+
+## Documentation
 
 HsToCore: https://serokell.io/blog/haskell-to-core
 

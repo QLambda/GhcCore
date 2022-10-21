@@ -32,22 +32,9 @@ coreDump mod = do
                     let typesCtor = showSDocUnsafe $ ppr $ mg_tcs mod
                     let coreExpStr = show  (coreToCProgram  mod )
                     let coreExpStrNoType = show  (coreToCProgram  mod )
-                    let coreStr = typesCtor ++ "\n----\n" ++ "\n--Typed--\n" ++ coreExpStr ++ "\n--No Typed--\n" ++ coreExpStrNoType
-                   
-                    liftIO $ print coreStr
-                    liftIO $ writeFile (getModuleName mod++".Core") coreStr
-                    -- liftIO $ print "--- mg_module mod ---"
-                    -- liftIO $ print $ showPprUnsafe  $ mg_module  mod
-                    -- liftIO $ print "--- mg_deps mod ---"
-                    -- liftIO $ print $ showSDocUnsafe  $ pprDeps emptyUnitState $ mg_deps mod
-                    -- liftIO $ print "--- mg_tcs mod Type Constructors---"
-                    -- liftIO $ print  $ showSDocUnsafe $ ppr $ mg_tcs mod
-                    -- liftIO $ print "--- mg_binds mod  Binds ---"
-                    -- liftIO $ print  $ showSDocUnsafe $ ppr $ mg_binds mod
-                    -- liftIO $ print "--- mg_rules mod  Rules ---"
-                    -- liftIO $ print  $ showSDocUnsafe $ ppr $ mg_rules mod
-                    -- liftIO $ print "--- mg_complete_matches mod  Complete Matches ---"
-                    -- liftIO $ print  $ showSDocUnsafe $ ppr $ mg_complete_matches mod
+                    liftIO $ writeFile (getModuleName mod++".CoreTyConst") typesCtor
+                    liftIO $ writeFile (getModuleName mod++".Core") coreExpStr
+                    liftIO $ writeFile (getModuleName mod++".CoreUntyped") coreExpStrNoType
                     return mod
 
 

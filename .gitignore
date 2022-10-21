@@ -1,5 +1,7 @@
 *.cabal
 *.Core
+*.CoreTyConst
+*.CoreUntyped
 dist
 dist-*
 cabal-dev
