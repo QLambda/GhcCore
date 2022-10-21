@@ -4,9 +4,9 @@ import GHC.Types.Var (Var(..))
 import GHC.Unit.Types
 import GHC.Unit.Module.Name
 import GHC.Core.TyCo.Rep
+import GHC.Utils.Outputable (renderWithContext)
 
 
--- NOT USED
 
 _showOuputable out = renderWithContext defaultSDocContext (ppr out)
 

@@ -1,0 +1,9 @@
+#!/bin/bash
+mkdir -p ~/.stack/global-project/
+cp .setup/stack1.yaml ~/.stack/global-project/stack.yaml
+stack install ghcid
+stack install haskell-dap ghci-dap haskell-debug-adapter
+stack install stylish-haskell hindent
+cp .setup/stack2.yaml ~/.stack/global-project/stack.yaml
+stack install hlint
+

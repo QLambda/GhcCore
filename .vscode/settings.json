@@ -6,7 +6,7 @@
     "haskell.openDocumentationInHackage": true,
     "haskell.openSourceInHackage": true,
     "files.autoSave": "onFocusChange",
-    "workbench.colorTheme": "Default High Contrast",
+    "workbench.colorTheme": "Solarized Light",
     "terminal.integrated.sendKeybindingsToShell": true,
     "haskell.toolchain": {
        "ghc": "9.4.2",

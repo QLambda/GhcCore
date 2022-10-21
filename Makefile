@@ -7,8 +7,10 @@ bootstrap:
 	stack haddock --keep-going
 	stack install hlint
 
-build: src
+build:
 	stack build
 
 run: build
 	cd examples; stack ghc -- -fplugin=CoreDump.Plugin basic.hs; cd -
+
+.PHONY: run build bootstrap cups

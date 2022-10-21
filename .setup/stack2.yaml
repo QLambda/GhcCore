@@ -1,0 +1,4 @@
+packages: []
+resolver: lts-19.24
+extra-deps:
+  - ghc-lib-parser-ex-9.0.0.6@sha256:79ead389dbbdb178421cba35e9776d4d8feccf36d5d1f8fcc90441f8ec786cfe,3655
