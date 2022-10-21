@@ -36,7 +36,6 @@ dependencies:
 
 library:
   source-dirs: src
-  exposed-modules:     CoreDump.Plugin
 
 
 tests:

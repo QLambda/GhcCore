@@ -5,7 +5,8 @@ bootstrap:
 	stack config set system-ghc --global true
 	stack setup
 	stack haddock --keep-going
-	stack install hlint
+	stack install hlint hpack
+	hpack
 
 build:
 	stack build

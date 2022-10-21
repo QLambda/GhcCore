@@ -1,3 +1,4 @@
+*.cabal
 *.Core
 dist
 dist-*

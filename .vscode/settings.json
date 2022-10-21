@@ -1,6 +1,6 @@
 {
     "haskell.formattingProvider": "brittany",
-    "haskell.ghcupExecutablePath": "/home/codespace/.ghcup/bin/ghcup",
+    "haskell.ghcupExecutablePath": "/Users/mcaro/.ghcup/bin/ghcup",
     "haskell.manageHLS": "GHCup",
     "haskell.checkProject": true,
     "haskell.openDocumentationInHackage": true,
@@ -10,7 +10,7 @@
     "terminal.integrated.sendKeybindingsToShell": true,
     "haskell.toolchain": {
        "ghc": "9.4.2",
-       "hls": "1.7.0.0"
+       "hls": "1.8.0.0"
     },
     //"haskell.hlint.executablePath": "hlint",
     "hoogle-vscode.useCabalDependencies": true,
