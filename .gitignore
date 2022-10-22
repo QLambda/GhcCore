@@ -1,4 +1,3 @@
-*.Example
 *.cabal
 *.Core
 *.CoreTyConst
