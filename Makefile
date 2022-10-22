@@ -8,7 +8,10 @@ bootstrap:
 	stack install hlint hpack
 	hpack
 
-build:
+clean:
+	git clean -f -X -d
+
+build: clean
 	stack build
 
 run: build
