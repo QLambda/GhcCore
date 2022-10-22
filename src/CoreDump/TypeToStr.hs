@@ -15,7 +15,7 @@ typeToStr::Type->String
 typeToStr (TyVarTy v) = _showOuputable v
 typeToStr (AppTy t1 t2) = typeToStr t1 ++ " " ++ typeToStr t2
 typeToStr (TyConApp tcon apps) = _showOuputable tcon ++ show (map typeToStr apps)
-typeToStr (ForAllTy b t) = "forall. "++ _showOuputable b ++ "~~~>" ++typeToStr t
+typeToStr (ForAllTy b t) = "(forall "++ _showOuputable b ++ "." ++ typeToStr t ++ ")"
 typeToStr x = "|TODO:"++ _showOuputable x ++"|"
 
 

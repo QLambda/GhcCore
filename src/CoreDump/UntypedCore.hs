@@ -49,10 +49,10 @@ instance Show UTExpr where
     show (UTVar var t)   =  var++t
     show (UTLit literal) = "Literal("++ literal ++ ")"
     show (UTApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
-    show (UTLam var t  e)   = "\\" ++ var ++ t ++ " -> {" ++ show e ++ "}"
+    show (UTLam var t  e)   = "{\\" ++ var ++ t ++ " -> " ++ show e ++ "}"
     show (UTLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (UTCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
-    show (Skip s)        = "Skip_"++s
+    show (Skip s)        = s
 
 
 

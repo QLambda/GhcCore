@@ -12,7 +12,7 @@
        "ghc": "9.4.2",
        "hls": "1.8.0.0"
     },
-    //"haskell.hlint.executablePath": "hlint",
+    "haskell.hlint.executablePath": "hlint",
     "hoogle-vscode.useCabalDependencies": true,
 }
 
