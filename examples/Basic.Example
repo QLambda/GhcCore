@@ -1,0 +1,4 @@
+module Basic (Unit:main)
+
+add =\$dNum -> (\x -> \y -> ((+) $dNum x y))
+main= add $fNumInteger Literal(1) Literal(2)

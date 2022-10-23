@@ -1,4 +1,4 @@
-module CoreDump.UntypedCore where
+module CoreDump.SimpleCore where
 import GHC.Plugins
 import GHC.Unit.Types
 import GHC.Unit.Module.Name
@@ -12,46 +12,46 @@ data UntypedCoreModule = UntypedCoreModule {
                           }      
 
 newtype UTBinders = UTBinders {getBinders::[UTBinder]}
-data UTBinder = UTNonRec String UTExpr | UTRec [(String, UTExpr)]
+data UTBinder = UTNonRec String SExpr | UTRec [(String, SExpr)]
 
 
 
-data UTExpr
-  = UTVar   String String          -- varName type
-  | UTLit   String
-  | UTApp   UTExpr  UTExpr
-  | UTLam   String String UTExpr   -- varName type exp
-  | UTLet   UTBinder UTExpr
-  | UTCase  UTExpr [UTAlt]  
+data SExpr
+  = SVar   String String          -- varName type
+  | SLit   String
+  | SApp   SExpr  SExpr
+  | SLam   String String SExpr   -- varName type exp
+  | UTLet   UTBinder SExpr
+  | SCase  SExpr [SAlt]  
   | Skip String
-  -- | UTCast  UTExpr UTCoercionR 
-  -- | Tick  CoreTickish (Expr b)
+  -- | SCast  SExpr UTSCoercionR 
+  -- | STick  CoreSTickish (Expr b)
   -- | Type  Type
-  -- | Coercion UTCoercion
+  -- | SCoercion UTSCoercion
   
 
-data UTAlt = UTAlt UTAltCon [String] UTExpr
+data SAlt = SAlt SAltCon [String] SExpr
                     deriving Show
 
 
 
-data UTAltCon
+data SAltCon
   = UTDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
                       -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
-  | UTLitAlt  String  -- ^ A literal: @case e of { 1 -> ... }@
+  | SLitAlt  String  -- ^ A literal: @case e of { 1 -> ... }@
                       -- Invariant: always an *unlifted* literal
                       -- See Note [Literal alternatives]
   | DEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
    deriving (Eq, Show)
 
 
-instance Show UTExpr where
-    show (UTVar var t)   =  var++t
-    show (UTLit literal) = "Literal("++ literal ++ ")"
-    show (UTApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
-    show (UTLam var t  e)   = "{\\" ++ var ++ t ++ " -> " ++ show e ++ "}"
+instance Show SExpr where
+    show (SVar var t)   =  var++t
+    show (SLit literal) = "Literal("++ literal ++ ")"
+    show (SApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
+    show (SLam var t  e)   = "{\\" ++ var ++ t ++ " -> " ++ show e ++ "}"
     show (UTLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
-    show (UTCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
+    show (SCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
     show (Skip s)        = s
 
 

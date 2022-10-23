@@ -22,7 +22,7 @@ typeToStr x = "|TODO:"++ _showOuputable x ++"|"
 
 -- data Type
 --   -- See Note [Non-trivial definitional equality]
---   = TyVarTy Var -- ^ Vanilla type or kind variable (*never* a coercion variable)
+--   = TyVarTy Var -- ^ Vanilla type or kind variable (*never* a SCoercion variable)
 
 --   | AppTy
 --         Type
@@ -55,10 +55,10 @@ typeToStr x = "|TODO:"++ _showOuputable x ++"|"
 --   | ForAllTy
 --         {-# UNPACK #-} !TyCoVarBinder
 --         Type            -- ^ A Π type.
---              -- Note [When we quantify over a coercion variable]
---              -- INVARIANT: If the binder is a coercion variable, it must
+--              -- Note [When we quantify over a SCoercion variable]
+--              -- INVARIANT: If the binder is a SCoercion variable, it must
 --              -- be mentioned in the Type. See
---              -- Note [Unused coercion variable in ForAllTy]
+--              -- Note [Unused SCoercion variable in ForAllTy]
 
 --   | FunTy      -- ^ FUN m t1 t2   Very common, so an important special case
 --                 -- See Note [Function types]
@@ -71,14 +71,14 @@ typeToStr x = "|TODO:"++ _showOuputable x ++"|"
 
 --   | CastTy
 --         Type
---         KindCoercion  -- ^ A kind cast. The coercion is always nominal.
+--         KindSCoercion  -- ^ A kind cast. The SCoercion is always nominal.
 --                       -- INVARIANT: The cast is never reflexive \(EQ2)
 --                       -- INVARIANT: The Type is not a CastTy (use TransCo instead) \(EQ3)
 --                       -- INVARIANT: The Type is not a ForAllTy over a tyvar \(EQ4)
 --                       -- See Note [Respecting definitional equality]
 
---   | CoercionTy
---         Coercion    -- ^ Injection of a Coercion into a type
+--   | SCoercionTy
+--         SCoercion    -- ^ Injection of a SCoercion into a type
 --                     -- This should only ever be used in the RHS of an AppTy,
 --                     -- in the list of a TyConApp, when applying a promoted
 --                     -- GADT data constructor
