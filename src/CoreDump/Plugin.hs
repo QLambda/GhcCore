@@ -5,7 +5,7 @@ module CoreDump.Plugin
 import GHC.Plugins
 import GHC.Unit.Module.Deps
 import GHC.Unit.State
-import CoreDump.CoreExtract (coreToCProgram)
+import CoreDump.SimpleCoreExtract (coreToCProgram)
 
 plugin :: Plugin
 plugin = defaultPlugin{

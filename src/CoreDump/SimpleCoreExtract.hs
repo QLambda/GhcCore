@@ -1,4 +1,4 @@
-module CoreDump.CoreExtract where
+module CoreDump.SimpleCoreExtract where
 import GHC.Plugins
 import GHC.Types.Var (Var(..))
 import GHC.Unit.Types
@@ -49,7 +49,7 @@ exprTopSExpr (App expr args) = SApp (exprTopSExpr expr) (exprTopSExpr args)
 exprTopSExpr (Lam name expr) = SLam n t (exprTopSExpr expr)
                                     where
                                          (n, t)=extractVar name
-exprTopSExpr (Let binder expr) = UTLet (getUTBinder binder) (exprTopSExpr expr)
+exprTopSExpr (Let binder expr) = SLet (getUTBinder binder) (exprTopSExpr expr)
 exprTopSExpr (Cast expr coersion) = Skip $ "SCast("++  show (exprTopSExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
 exprTopSExpr (Tick _ expr) = Skip $ "STick("++  show (exprTopSExpr expr) ++ ")"
 exprTopSExpr (Type t) = Skip $ "@" ++ showPprUnsafe t
@@ -82,22 +82,22 @@ exprTopSExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopSExpr exp1)
 
 
 getUTBinder::CoreBind -> UTBinder
-getUTBinder (NonRec name expr) = UTNonRec (getOccString name) (exprTopSExpr  expr) 
-getUTBinder (Rec exprs) =  UTRec (unpack exprs)
+getUTBinder (NonRec name expr) = SNonRec (getOccString name) (exprTopSExpr  expr) 
+getUTBinder (Rec exprs) =  SRec (unpack exprs)
                             where
                                 unpack [] = []
                                 unpack ((name, expr):es) = (getOccString name, exprTopSExpr  expr) : unpack es
 
 
-getUTBinders::CoreProgram -> UTBinders
-getUTBinders [] = UTBinders []
-getUTBinders (cb:cps) = UTBinders $ getUTBinder cb:getBinders (getUTBinders cps)
+getSBinders::CoreProgram -> SBinders
+getSBinders [] = SBinders []
+getSBinders (cb:cps) = SBinders $ getUTBinder cb:getBinders (getSBinders cps)
 
 
 
 
 
-coreToCProgram::ModGuts -> UntypedCoreModule
-coreToCProgram mod = UntypedCoreModule (getModuleName $ mg_module mod) (getUTBinders $ mg_binds mod)   --TODO process the binders
+coreToCProgram::ModGuts -> SimpleCoreModule
+coreToCProgram mod = SimpleCoreModule (getModuleName $ mg_module mod) (getSBinders $ mg_binds mod)   --TODO process the binders
 
 

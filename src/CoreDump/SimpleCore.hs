@@ -6,24 +6,24 @@ import GHC.Unit.Module.Name
 
 
 -- UntypedCoreProgram is the representation of a module in untyped core language
-data UntypedCoreModule = UntypedCoreModule { 
+data SimpleCoreModule = SimpleCoreModule { 
                                 mod :: (String, ModuleName),   -- Module unit,name
-                                binders :: UTBinders            -- Binders
+                                binders :: SBinders            -- Binders
                           }      
 
-newtype UTBinders = UTBinders {getBinders::[UTBinder]}
-data UTBinder = UTNonRec String SExpr | UTRec [(String, SExpr)]
+newtype SBinders = SBinders {getBinders::[UTBinder]}
+data UTBinder = SNonRec String SExpr | SRec [(String, SExpr)]
 
 
 
 data SExpr
-  = SVar   String String          -- varName type
-  | SLit   String
-  | SApp   SExpr  SExpr
-  | SLam   String String SExpr   -- varName type exp
-  | UTLet   UTBinder SExpr
-  | SCase  SExpr [SAlt]  
-  | Skip String
+  = SVar   String String          -- SVar Name Type
+  | SLit   String                 -- Literal String_Representation
+  | SApp   SExpr  SExpr           -- SApp e1 e2
+  | SLam   String String SExpr    -- SLam variable type exp
+  | SLet   UTBinder SExpr        -- ULet Binder e
+  | SCase  SExpr [SAlt]           -- SCase e [Alternatives]
+  | Skip String                   -- Skip is for string representation of not done yet expresions
   -- | SCast  SExpr UTSCoercionR 
   -- | STick  CoreSTickish (Expr b)
   -- | Type  Type
@@ -37,8 +37,7 @@ data SAlt = SAlt SAltCon [String] SExpr
 
 data SAltCon
   = UTDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
-                      -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
-  | SLitAlt  String  -- ^ A literal: @case e of { 1 -> ... }@
+                       -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
                       -- Invariant: always an *unlifted* literal
                       -- See Note [Literal alternatives]
   | DEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
@@ -46,11 +45,11 @@ data SAltCon
 
 
 instance Show SExpr where
-    show (SVar var t)   =  var++t
+    show (SVar var t)   =  var++"::" ++t
     show (SLit literal) = "Literal("++ literal ++ ")"
     show (SApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
-    show (SLam var t  e)   = "{\\" ++ var ++ t ++ " -> " ++ show e ++ "}"
-    show (UTLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
+    show (SLam var t  e)   = "(\\" ++ var ++ t ++ " -> " ++ show e ++ ")"
+    show (SLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (SCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
     show (Skip s)        = s
 
@@ -61,21 +60,21 @@ instance Show SExpr where
 -}                        
 
 instance Show UTBinder where
-    show (UTNonRec name expr) = name ++"="++ show expr
-    show (UTRec binders) = "\nREC {\n" ++ shollAll binders ++ "\n}\n\n"
+    show (SNonRec name expr) = name ++"="++ show expr
+    show (SRec binders) = "\nREC {\n" ++ shollAll binders ++ "\n}\n\n"
                             where 
                                 shollAll [] = ""
                                 shollAll ((name, expr):bs) = name ++ " = " ++ show expr ++ "\n" ++ shollAll bs
 
-instance Show UTBinders where
+instance Show SBinders where
     show = showB
         where
-            showB (UTBinders [])    = ""
-            showB (UTBinders (b:bs)) = show b ++ "\n" ++ showB (UTBinders bs)
+            showB (SBinders [])    = ""
+            showB (SBinders (b:bs)) = show b ++ "\n" ++ showB (SBinders bs)
 
 
-instance Show UntypedCoreModule where
-    show (UntypedCoreModule (unit, mname) binders) = "module "++  moduleNameString mname ++ " (Unit:" ++ unit ++ ")" ++ "\n\n" 
+instance Show SimpleCoreModule where
+    show (SimpleCoreModule (unit, mname) binders) = "module "++  moduleNameString mname ++ " (Unit:" ++ unit ++ ")" ++ "\n\n" 
                                                      ++ show binders
 
 
