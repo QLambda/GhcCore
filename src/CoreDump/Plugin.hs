@@ -6,6 +6,7 @@ import GHC.Plugins
 import GHC.Unit.Module.Deps
 import GHC.Unit.State
 import CoreDump.SimpleCoreExtract (coreToCProgram)
+import CoreDump.UntCoreExtract (coreToUCProgram)
 
 plugin :: Plugin
 plugin = defaultPlugin{
@@ -31,7 +32,8 @@ coreDump::ModGuts -> CoreM ModGuts
 coreDump mod = do 
                     let typesCtor = showSDocUnsafe $ ppr $ mg_tcs mod
                     let coreExpStr = show  (coreToCProgram  mod )
-                    let coreExpStrNoType = show  (coreToCProgram  mod )
+                    let coreExpStrNoType = show  (coreToUCProgram  mod )
+                    
                     liftIO $ writeFile (getModuleName mod++".CoreTyConst") typesCtor
                     liftIO $ writeFile (getModuleName mod++".Core") coreExpStr
                     liftIO $ writeFile (getModuleName mod++".CoreUntyped") coreExpStrNoType

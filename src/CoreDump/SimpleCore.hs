@@ -11,17 +11,17 @@ data SimpleCoreModule = SimpleCoreModule {
                                 binders :: SBinders            -- Binders
                           }      
 
-newtype SBinders = SBinders {getBinders::[UTBinder]}
-data UTBinder = SNonRec String SExpr | SRec [(String, SExpr)]
+newtype SBinders = SBinders {getBinders::[SBinder]}
+data SBinder = SNonRec String SExpr | SRec [(String, SExpr)]
 
-
+data VarCategory = TyVar | TcTyVar | ID deriving Show
 
 data SExpr
-  = SVar   String String          -- SVar Name Type
+  = SVar   String String VarCategory         -- SVar Name Type VariableCategory
   | SLit   String                 -- Literal String_Representation
   | SApp   SExpr  SExpr           -- SApp e1 e2
-  | SLam   String String SExpr    -- SLam variable type exp
-  | SLet   UTBinder SExpr        -- ULet Binder e
+  | SLam   SExpr String SExpr    -- SLam variable type exp
+  | SLet   SBinder SExpr        -- ULet Binder e
   | SCase  SExpr [SAlt]           -- SCase e [Alternatives]
   | Skip String                   -- Skip is for string representation of not done yet expresions
   -- | SCast  SExpr UTSCoercionR 
@@ -45,10 +45,10 @@ data SAltCon
 
 
 instance Show SExpr where
-    show (SVar var t)   =  var++"::" ++t
+    show (SVar var t cat)   =  show cat ++ "<" ++ var++"::" ++t ++">"
     show (SLit literal) = "Literal("++ literal ++ ")"
     show (SApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
-    show (SLam var t  e)   = "(\\" ++ var ++ t ++ " -> " ++ show e ++ ")"
+    show (SLam var t  e)   = "(\\" ++ show var ++ " -> " ++ show e ++ ")"
     show (SLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (SCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
     show (Skip s)        = s
@@ -58,8 +58,7 @@ instance Show SExpr where
 {-
     Show Section
 -}                        
-
-instance Show UTBinder where
+instance Show SBinder where
     show (SNonRec name expr) = name ++"="++ show expr
     show (SRec binders) = "\nREC {\n" ++ shollAll binders ++ "\n}\n\n"
                             where 

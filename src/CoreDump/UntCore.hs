@@ -1,4 +1,4 @@
-module CoreDump.UntypedCore where
+module CoreDump.UntCore where
 import GHC.Plugins
 import GHC.Unit.Types
 import GHC.Unit.Module.Name
@@ -11,19 +11,19 @@ data UntypedCoreModule = UntypedCoreModule {
                                 binders :: UBinders            -- Binders
                           }      
 
-newtype UBinders = UBinders {getBinders::[UBinder]}
+newtype UBinders = UBinders {gBinders::[UBinder]}
 data UBinder = UNonRec String UExpr | URec [(String, UExpr)]
 
 
 
 data UExpr
-  = UVar   String String          -- SVar Name Type
-  | ULit   String                 -- Literal String_Representation
-  | UApp   UExpr  UExpr           -- SApp e1 e2
-  | ULam   String String UExpr    -- SLam variable type exp
+  = UVar   String               -- SVar Name Type
+  | ULit   String               -- Literal String_Representation
+  | UApp   UExpr  UExpr         -- SApp e1 e2
+  | ULam   String UExpr         -- SLam variable  exp
   | ULet   UBinder UExpr        -- ULet Binder e
-  | UCase  UExpr [UAlt]           -- SCase e [Alternatives]
-  | USkip String                   -- Skip is for string representation of not done yet expresions
+  | UCase  UExpr [UAlt]         -- SCase e [Alternatives]
+  | USkip String                -- Skip is for string representation of not done yet expresions
   -- | SCast  SExpr UTSCoercionR 
   -- | STick  CoreSTickish (Expr b)
   -- | Type  Type
@@ -45,10 +45,10 @@ data UAltCon
 
 
 instance Show UExpr where
-    show (UVar var t)   =  var++"::" ++t
+    show (UVar var)   =  var
     show (ULit literal) = "Literal("++ literal ++ ")"
     show (UApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
-    show (ULam var t  e)   = "(\\" ++ var ++ t ++ " -> " ++ show e ++ ")"
+    show (ULam var   e)   = "(\\" ++ var ++ " -> " ++ show e ++ ")"
     show (ULet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
     show (UCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
     show (USkip s)        = s

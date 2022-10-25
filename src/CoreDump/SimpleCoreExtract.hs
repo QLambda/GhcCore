@@ -24,32 +24,25 @@ showOuputable out = renderWithContext defaultSDocContext (ppr out)
 -- typeToStr::Type -> String
 -- typeToStr  = showOuputable 
 
-extractVar::Var->(String, String) -- returns (variableName, type)
-extractVar v | isTyVar v = (getOccString v , "*")
-             | isTcTyVar v  = (getOccString v , "Tc(" ++ typeToStr ( varType  v)++")")
-             | isId  v   = (getOccString v , typeToStr ( varType v))
+extractVar::Var->(String, String, VarCategory) -- returns (variableName, type)
+extractVar v | isTyVar v = (getOccString v, "*", TyVar)
+             | isTcTyVar v  = (getOccString v, typeToStr ( varType  v), TcTyVar)
+             | isId  v   = (getOccString v, typeToStr ( varType v), ID)
 
-isKindVar::Var -> Bool
-isKindVar v =  isTyVar v || isTcTyVar v
-
-isType::Expr b -> Bool
-isType (Var id) = isTyVar id || isTcTyVar id
-isType (Type t) = True
-isType  x = False
 
 
 
 ------------------------------
 exprTopSExpr :: Expr Var -> SExpr
-exprTopSExpr (Var id) = SVar n t
+exprTopSExpr (Var id) = SVar n t cat
                             where
-                                (n, t)=extractVar id
+                                (n, t, cat)=extractVar id
 exprTopSExpr (Lit literal) = SLit $ showOuputable literal
 exprTopSExpr (App expr args) = SApp (exprTopSExpr expr) (exprTopSExpr args)
-exprTopSExpr (Lam name expr) = SLam n t (exprTopSExpr expr)
+exprTopSExpr (Lam name expr) = SLam (SVar n t cat) t (exprTopSExpr expr)
                                     where
-                                         (n, t)=extractVar name
-exprTopSExpr (Let binder expr) = SLet (getUTBinder binder) (exprTopSExpr expr)
+                                         (n, t, cat)=extractVar name
+exprTopSExpr (Let binder expr) = SLet (getSBinder binder) (exprTopSExpr expr)
 exprTopSExpr (Cast expr coersion) = Skip $ "SCast("++  show (exprTopSExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
 exprTopSExpr (Tick _ expr) = Skip $ "STick("++  show (exprTopSExpr expr) ++ ")"
 exprTopSExpr (Type t) = Skip $ "@" ++ showPprUnsafe t
@@ -58,32 +51,10 @@ exprTopSExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopSExpr exp1)
 --exprTopSExpr expr = Skip "TODO"
 ---------------------------
 
--- exprTopSExprNoTyped (Var id) = SVar n ""
---                             where
---                                 (n, t)=extractVar id
--- exprTopSExprNoTyped (Lit literal) = SLit $ showOuputable literal
--- exprTopSExprNoTyped (App expr arg) = if isType arg then expr1 else SApp expr1 utarg
---                                         where
---                                             expr1 = exprTopSExprNoTyped expr
---                                             utarg = exprTopSExprNoTyped arg
 
--- exprTopSExprNoTyped (Lam name expr) = if isKindVar name then SExpr else SLam n "" SExpr
---                                         where
---                                             SExpr = exprTopSExprNoTyped expr
---                                             (n, t)=extractVar name
-
--- exprTopSExprNoTyped (Let binder expr) = UTLet (getUTBinder binder) (exprTopSExprNoTyped expr)
--- exprTopSExprNoTyped (Cast expr coersion) = Skip $ "SCast("++  show (exprTopSExprNoTyped expr) ++ "~" ++ showOuputable coersion ++ ")"
--- exprTopSExprNoTyped (STick _ expr) = Skip $ "STick("++  show (exprTopSExprNoTyped expr) ++ ")"
--- exprTopSExprNoTyped (Type t) = Skip $ "@" ++ showPprUnsafe t
--- exprTopSExprNoTyped (SCoercion c) = Skip $ "~ " ++ showPprUnsafe c
--- exprTopSExprNoTyped (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopSExprNoTyped exp1) ++ ") of " ++ (show $ map showOuputable  alts)
-
-
-
-getUTBinder::CoreBind -> UTBinder
-getUTBinder (NonRec name expr) = SNonRec (getOccString name) (exprTopSExpr  expr) 
-getUTBinder (Rec exprs) =  SRec (unpack exprs)
+getSBinder::CoreBind -> SBinder
+getSBinder (NonRec name expr) = SNonRec (getOccString name) (exprTopSExpr  expr) 
+getSBinder (Rec exprs) =  SRec (unpack exprs)
                             where
                                 unpack [] = []
                                 unpack ((name, expr):es) = (getOccString name, exprTopSExpr  expr) : unpack es
@@ -91,7 +62,7 @@ getUTBinder (Rec exprs) =  SRec (unpack exprs)
 
 getSBinders::CoreProgram -> SBinders
 getSBinders [] = SBinders []
-getSBinders (cb:cps) = SBinders $ getUTBinder cb:getBinders (getSBinders cps)
+getSBinders (cb:cps) = SBinders $ getSBinder cb:getBinders (getSBinders cps)
 
 
 
