@@ -1,14 +1,3 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE MagicHash, NoImplicitPrelude, TypeFamilies, UnboxedTuples #-}
-{-# LANGUAGE CPP #-}
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE MultiWayIf #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE KindSignatures #-}
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 module Basic where
 
 import Glude.GInt

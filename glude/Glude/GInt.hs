@@ -1,6 +1,4 @@
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE MagicHash, NoImplicitPrelude, TypeFamilies, UnboxedTuples #-}
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MultiWayIf #-}
