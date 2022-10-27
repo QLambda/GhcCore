@@ -23,10 +23,10 @@ data SExpr
   | SLam   SExpr String SExpr    -- SLam variable type exp
   | SLet   SBinder SExpr        -- ULet Binder e
   | SCase  SExpr [SAlt]           -- SCase e [Alternatives]
-  | Skip String                   -- Skip is for string representation of not done yet expresions
+  | Skip   String                   -- Skip is for string representation of not done yet expresions
   -- | SCast  SExpr UTSCoercionR 
   -- | STick  CoreSTickish (Expr b)
-  -- | Type  Type
+  | SType  String
   -- | SCoercion UTSCoercion
   
 
@@ -45,12 +45,13 @@ data SAltCon
 
 
 instance Show SExpr where
-    show (SVar var t cat)   =  show cat ++ "<" ++ var++"::" ++t ++">"
-    show (SLit literal) = "Literal("++ literal ++ ")"
-    show (SApp e1 e2)   =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
+    show (SVar var t cat)  =  show cat ++ "<" ++ var++"::" ++t ++">"
+    show (SLit literal)    = "Literal("++ literal ++ ")"
+    show (SApp e1 e2)      =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
     show (SLam var t  e)   = "(\\" ++ show var ++ " -> " ++ show e ++ ")"
-    show (SLet  b e2)   = "let  ("++ show b ++ ") in" ++ show e2
-    show (SCase e alts) = "case" ++ show e ++ " of \n     " ++ show alts
+    show (SLet  b e2)    = "let  ("++ show b ++ ") in" ++ show e2
+    show (SCase e alts)  = "case" ++ show e ++ " of \n     " ++ show alts
+    show (SType s)       = s
     show (Skip s)        = s
 
 

@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 module CoreDump.UntCoreExtract where
 import GHC.Plugins
 import GHC.Types.Var (Var(..))
@@ -23,14 +24,20 @@ import CoreDump.SimpleCoreExtract (exprTopSExpr, getModuleName)
   | Skip String                   -- Skip is for string representation of not done yet expresions
 -}
 
-sExprToUExp (SVar id t cat) = UVar id
-sExprToUExp (SLit literal) = ULit literal
-sExprToUExp (SApp expr arg) = UApp (sExprToUExp expr) (sExprToUExp arg)
-
-sExprToUExp (SLam var t expr) = ULam varName (sExprToUExp expr)
-                                where
-                                  varName = show (sExprToUExp var)
+sExprToUExp (SVar id t cat) = UVar id                                    -- erase (var) = var
+sExprToUExp (SLit literal) = ULit literal                                -- erase (lit) = lit
+sExprToUExp (SApp expr arg) = case arg of 
+                                SVar id t ID  -> UApp (sExprToUExp expr) (sExprToUExp arg)       -- erase (t1 var) = (erase t1) (erase var)
+                                SVar id t typ -> sExprToUExp expr                                -- erase (t1 Type) = (erase t1) 
+                                SType _       -> sExprToUExp expr                                -- erase (t1 Type) = (erase t1) 
+                                ex            ->  UApp (sExprToUExp expr) (sExprToUExp arg)      -- erase (t1 t2) = (erase t1) (erase t2)
+sExprToUExp (SLam var t expr) = case var of
+                                   (SVar id t cat) ->  case cat of
+                                                          TyVar -> sExprToUExp expr              -- erase (\x:* -> exp) = erase exp
+                                                          TcTyVar -> sExprToUExp expr            -- erase (\x:T a -> exp) = erase exp
+                                                          ID -> ULam id (sExprToUExp expr)       -- erase (\x -> exp) =  \x ->  erase exp
 sExprToUExp (Skip str) = USkip str
+sExprToUExp a = USkip (show a)
 
 
 -- sExprToUExp (Let binder expr) = UTLet (getUTBinder binder) (sExprToUExp expr)

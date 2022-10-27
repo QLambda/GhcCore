@@ -23,7 +23,7 @@ dependencies:
   - base 
   - ghc 
 
-# ghc-options:
+#ghc-options:
 # - -Wall
 # - -Wcompat
 # - -Widentities

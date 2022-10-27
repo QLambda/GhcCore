@@ -15,6 +15,6 @@ build: clean
 	stack build
 
 run: build
-	cd examples; stack ghc -- -c -fplugin=CoreDump.Plugin basic.hs; cd -
+	cd g-workbench; stack ghc -- -c --make  -fplugin=CoreDump.Plugin -i./../glude/ basic.hs; cd -
 
 .PHONY: run build bootstrap cups
