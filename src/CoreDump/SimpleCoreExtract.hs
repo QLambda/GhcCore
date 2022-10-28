@@ -24,30 +24,50 @@ showOuputable out = renderWithContext defaultSDocContext (ppr out)
 -- typeToStr::Type -> String
 -- typeToStr  = showOuputable 
 
-extractVar::Var->(String, String, VarCategory) -- returns (variableName, type)
-extractVar v | isTyVar v = (getOccString v, "*", TyVar)
-             | isTcTyVar v  = (getOccString v, typeToStr ( varType  v), TcTyVar)
-             | isId  v   = (getOccString v, typeToStr ( varType v), ID)
+extractVar::Var->SExpr-- returns (variableName, type, category)
+extractVar v | isTyVar v = SVar (getOccString v)  "*"  TyVar
+             | isTcTyVar v  = SVar (getOccString v) (typeToStr ( varType  v)) TcTyVar
+             | isId  v   = SVar (getOccString v) (typeToStr ( varType v)) ID
 
 
 
 
 ------------------------------
 exprTopSExpr :: Expr Var -> SExpr
-exprTopSExpr (Var id) = SVar n t cat
-                            where
-                                (n, t, cat)=extractVar id
+exprTopSExpr (Var id) = extractVar id
 exprTopSExpr (Lit literal) = SLit $ showOuputable literal
 exprTopSExpr (App expr args) = SApp (exprTopSExpr expr) (exprTopSExpr args)
-exprTopSExpr (Lam name expr) = SLam (SVar n t cat) t (exprTopSExpr expr)
+exprTopSExpr (Lam name expr) = SLam var (typ var) (exprTopSExpr expr)
                                     where
-                                         (n, t, cat)=extractVar name
+                                         var=extractVar name
+
 exprTopSExpr (Let binder expr) = SLet (getSBinder binder) (exprTopSExpr expr)
 exprTopSExpr (Cast expr coersion) = Skip $ "SCast("++  show (exprTopSExpr expr) ++ "~" ++ showOuputable coersion ++ ")"
 exprTopSExpr (Tick _ expr) = Skip $ "STick("++  show (exprTopSExpr expr) ++ ")"
 exprTopSExpr (Type t) = SType $ showPprUnsafe t
 exprTopSExpr (Coercion c) = Skip $ "~ " ++ showPprUnsafe c
-exprTopSExpr (Case exp1 b t alts) = Skip $ "Case  (" ++ show (exprTopSExpr exp1) ++ ") of " ++ show ( map showOuputable  alts)
+exprTopSExpr (Case exp1 b t alts) = SCase (exprTopSExpr exp1) bs salts
+                                        where
+                                            salts = map (\(Alt altcon bss expr) -> SAlt (mapAlts altcon) (args bss) $ exprTopSExpr expr) alts
+                                            mapAlts (DataAlt const) = SDataAlt $ getOccString const
+                                            mapAlts (LitAlt  lit) = SLitAlt $ showOuputable lit
+                                            mapAlts DEFAULT = SDEFAULT 
+                                            args = map extractVar
+                                            bs = extractVar b
+                        
+
+-- data SAlt = SAlt SAltCon [String] SExpr
+--                     deriving Show
+
+-- data SAltCon
+--   = SDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
+--                        -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
+--                       -- Invariant: always an *unlifted* literal
+--                       -- See Note [Literal alternatives]
+--   | DEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
+--    deriving (Eq, Show)
+    
+ --   Skip $ "Case  (" ++ show (exprTopSExpr exp1) ++ ") of " ++ show ( map showOuputable  alts)
 --exprTopSExpr expr = Skip "TODO"
 ---------------------------
 

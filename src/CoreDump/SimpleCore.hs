@@ -16,13 +16,15 @@ data SBinder = SNonRec String SExpr | SRec [(String, SExpr)]
 
 data VarCategory = TyVar | TcTyVar | ID deriving Show
 
+type VarDescription = (String, String, VarCategory)
+
 data SExpr
-  = SVar   String String VarCategory         -- SVar Name Type VariableCategory
+  = SVar   {name::String, typ::String, cat::VarCategory}         -- SVar Name Type VariableCategory
   | SLit   String                 -- Literal String_Representation
   | SApp   SExpr  SExpr           -- SApp e1 e2
   | SLam   SExpr String SExpr    -- SLam variable type exp
-  | SLet   SBinder SExpr        -- ULet Binder e
-  | SCase  SExpr [SAlt]           -- SCase e [Alternatives]
+  | SLet   SBinder SExpr          -- ULet Binder e
+  | SCase  SExpr SExpr [SAlt]           -- SCase e b [Alternatives]
   | Skip   String                   -- Skip is for string representation of not done yet expresions
   -- | SCast  SExpr UTSCoercionR 
   -- | STick  CoreSTickish (Expr b)
@@ -30,17 +32,18 @@ data SExpr
   -- | SCoercion UTSCoercion
   
 
-data SAlt = SAlt SAltCon [String] SExpr
+data SAlt = SAlt SAltCon [SExpr] SExpr    -- [SExpr] are array of Variables
                     deriving Show
 
 
 
 data SAltCon
-  = UTDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
+  = SLitAlt String
+  | SDataAlt String   --  ^ A plain data constructor: @case e of { Foo x -> ... }@.
                        -- Invariant: the 'DataCon' is always from a @data@ type, and never from a @newtype@
                       -- Invariant: always an *unlifted* literal
                       -- See Note [Literal alternatives]
-  | DEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
+  | SDEFAULT           -- ^ Trivial alternative: @case e of { _ -> ... }@
    deriving (Eq, Show)
 
 
@@ -50,9 +53,9 @@ instance Show SExpr where
     show (SApp e1 e2)      =  "(" ++ show e1 ++ " " ++ show e2 ++ ")"
     show (SLam var t  e)   = "(\\" ++ show var ++ " -> " ++ show e ++ ")"
     show (SLet  b e2)    = "let  ("++ show b ++ ") in" ++ show e2
-    show (SCase e alts)  = "case" ++ show e ++ " of \n     " ++ show alts
+    show (SCase e s alts)  = "case " ++ show e ++ "  (" ++ show s ++ ") of \n     " ++ show alts
     show (SType s)       = s
-    show (Skip s)        = s
+    show (Skip s)        = "##" ++ s ++ "##"
 
 
 

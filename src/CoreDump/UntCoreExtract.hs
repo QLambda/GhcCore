@@ -36,8 +36,25 @@ sExprToUExp (SLam var t expr) = case var of
                                                           TyVar -> sExprToUExp expr              -- erase (\x:* -> exp) = erase exp
                                                           TcTyVar -> sExprToUExp expr            -- erase (\x:T a -> exp) = erase exp
                                                           ID -> ULam id (sExprToUExp expr)       -- erase (\x -> exp) =  \x ->  erase exp
-sExprToUExp (Skip str) = USkip str
-sExprToUExp a = USkip (show a)
+
+sExprToUExp (SLet binder expr) = ULet ubinder $ sExprToUExp expr  
+                                  where 
+                                    ubinder = binderToUbinder binder
+                                    binderToUbinder (SNonRec var expr) =  UNonRec var (sExprToUExp expr)
+                                    binderToUbinder (SRec exprs) =  URec $ map (\(s,e) -> (s, sExprToUExp e)) exprs
+
+
+sExprToUExp (SCase expr expr2 alts) = UCase (sExprToUExp expr) (sExprToUExp expr2) ualts
+                                    where
+                                            ualts = map (\(SAlt altcon bs expr) -> UAlt (mapAlts altcon) (bssT bs) $ sExprToUExp expr) alts
+                                            mapAlts (SDataAlt const) = UDataAlt const
+                                            mapAlts (SLitAlt  lit) = ULitAlt lit
+                                            mapAlts SDEFAULT = UDEFAULT 
+                                            bssT = map sExprToUExp 
+
+
+sExprToUExp (Skip str) = USkip (str++"SSSS!!!!")
+sExprToUExp a = USkip $ show a ++ "!!!!!!"
 
 
 -- sExprToUExp (Let binder expr) = UTLet (getUTBinder binder) (sExprToUExp expr)
